@@ -6,3 +6,4 @@
 # Utilisation du projet
  - Get the repository (clone, fork, or download zip),
  - Open Unity > Open other > select root folder
+ 
