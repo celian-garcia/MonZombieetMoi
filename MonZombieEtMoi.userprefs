@@ -1,13 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Common\Scripts\Editor\InputManagerEditor.cs">
     <Files>
       <File FileName="Assets\Situation1\Scripts\CameraMouvementsScript.cs" Line="64" Column="60" />
       <File FileName="..\fff\Scripts\CameraMouvementsScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Situation1\Scripts\WakeUpScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Common\Scripts\MovementManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Common\Scripts\InputManager.cs" Line="23" Column="59" />
-      <File FileName="Assets\Common\Scripts\Editor\InputManagerEditor.cs" Line="1" Column="1" />
+      <File FileName="Assets\Common\Scripts\InputManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Common\Scripts\Editor\InputManagerEditor.cs" Line="18" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
