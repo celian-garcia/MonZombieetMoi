@@ -10,6 +10,9 @@ Library/expandedItems
 Library/metadata
 Library/previews
 Library/guidmapper
+Library/CurrentLayout.dwlt
+Library/shadercompiler-32bit-1.log
+Library/shadercompiler-64bit-1.log
 Temp
 *.csproj
 *.pidb
