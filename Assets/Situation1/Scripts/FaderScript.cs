@@ -31,6 +31,15 @@ public class FaderScript : MonoBehaviour {
 		fadeDir = direction;
 		fadeSpeed = speed;
 	}
+	public void BeginFade(int direction, float speed, float waitTime){
+		StartCoroutine(waitBeforeFade (direction, speed, waitTime));
+	}
+
+	private IEnumerator waitBeforeFade(int direction, float speed, float waitTime){
+		yield return new WaitForSeconds (waitTime);
+		fadeDir = direction;
+		fadeSpeed = speed;
+	}
 
 	void OnLevelWasLoaded (){
 		BeginFade (-1);

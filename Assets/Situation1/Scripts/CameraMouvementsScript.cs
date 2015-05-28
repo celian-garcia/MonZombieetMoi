@@ -61,14 +61,18 @@ public class CameraMouvementsScript : MonoBehaviour {
 				stop = k > (posInterpolateLength - n - 1);
 			}
 		} else if ((this.transform.position - pos [posLength - 1]).magnitude > 0.1f) {
-			GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<FaderScript> ().BeginFade(1,2);
 
+			speed = speed < 0.9f ? 0.9f : speed -= 12.5f * Time.deltaTime;
 			translateVector = (pos [posLength - 1] - this.transform.position);
 			this.transform.position += (translateVector.normalized * Time.deltaTime * speed);
 			tmp = (this.transform.position - pos [posLength - 1]).magnitude;
-			tmp = tmp > 1 ? 1 : tmp;
+			tmp = tmp > 0.6f ? 1 : tmp;
 			tmp = tmp < 0 ? 0 : tmp;
 			this.transform.LookAt (resetLook * (1 - tmp) + nextLook * (tmp));
+
+			if ((this.transform.position - pos [posLength - 1]).magnitude < 0.92f) {
+				GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<FaderScript> ().BeginFade(1,2);
+			}
 			
 		} else if (!CameraMvtEnd) {
 			GameObject.Find("char_ethan").GetComponent<WakeUpScript>().getUp();
