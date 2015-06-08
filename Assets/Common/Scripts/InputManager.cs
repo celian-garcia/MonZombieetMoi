@@ -25,41 +25,24 @@ public class InputManager : MonoBehaviour {
 	public HeadControl head_controls = HeadControl.XBOX;
 	
 	// PRIVATE MEMBERS
-	private MovementManager mover;
 	private bool sneak = false;
 	private Vector2 direction; // no jump
 	private Vector2 rotation; 
+	private bool oculus_use;
+	private bool infrared_use;
+//	private MovementManager mover;
 
 	// STATIC
 	private static float XBOX_SENSITIVITY = 0.6f;
 	
 	void Start () {
-		mover = GetComponent<MovementManager>();
-		initMainCamera ();
+//		mover = GetComponent<MovementManager> ();
 	}
-
-	void initMainCamera () {
-
-		Camera FPCamera = GameObject.FindWithTag ("FPCamera").GetComponent<Camera> ();
-		Camera TPCamera = GameObject.FindWithTag ("TPCamera").GetComponent<Camera> ();
-
-		switch (control_type) {
-		case ControlType.FIRST_PERSON:
-			FPCamera.enabled = true;
-			TPCamera.enabled = false;
-			break;
-		case ControlType.THIRD_PERSON:
-			FPCamera.enabled = false;
-			TPCamera.enabled = true;
-			break;
-		default:
-			Debug.LogError("You have to select a control type in the input manager");
-			break;
-		}
-
-	}
-
+	
 	void FixedUpdate () {
+
+		oculus_use = false;
+		infrared_use = false;
 
 		// Update directions of the body
 		switch (body_controls) {
@@ -98,7 +81,19 @@ public class InputManager : MonoBehaviour {
 			}
 		}
 
-		mover.Move(control_type, direction, rotation);
+//		mover.Move (control_type, direction, rotation);
+	}
+
+	public ControlType getControlType () {
+		return this.control_type;
+	}
+
+	public Vector2 getDirection () {
+		return this.direction;
+	}
+
+	public Vector2 getOrientation () {
+		return this.rotation;
 	}
 	
 	void UpdateXboxDirection() {
@@ -129,8 +124,7 @@ public class InputManager : MonoBehaviour {
 	}
 
 	void UpdateXmlDirection() {
-		Debug.LogError("Xml Path in construction");
-		// TO DO : the character follow a predefined path
+		infrared_use = true;
 	}
 
 	void UpdateInfraredDirection() {
@@ -167,8 +161,7 @@ public class InputManager : MonoBehaviour {
 	}
 	
 	void UpdateOculusRotation() {
-		Debug.LogError("Oculus rotation in construction");
-		// TO DO : oculus head rotations
+		oculus_use = true;
 	}
 
 

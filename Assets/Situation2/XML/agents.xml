@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='us-ascii'?>
+
+<agents>
+	<agent id="agent1">
+
+		<characteristics>
+
+			<age>normal</age>
+
+			<stress_level>2</stress_level>
+
+			<interest_level>1</interest_level>
+
+		</characteristics>
+
+		<body name="Ethan" >Prefabs/char_ethan_museum</body>
+
+		<path sense="-1" >Paths/path1.path</path>
+
+	</agent>
+
+	<agent id="agent2">
+
+		<characteristics>
+
+			<age>old</age>
+
+			<stress_level>4</stress_level>
+
+			<interest_level>5</interest_level>
+
+		</characteristics>
+
+		<body name="Ethan" >Prefabs/char_ethan_museum</body>
+
+		<path sense="1" >Paths/path2.path</path>
+
+	</agent>
+
+	<agent id="agent3">
+
+		<characteristics>
+
+			<age>young</age>
+
+			<stress_level>0</stress_level>
+
+			<interest_level>0</interest_level>
+
+		</characteristics>
+
+		<body name="Ethan" >Prefabs/char_ethan_museum</body>
+
+		<path sense="1" >Paths/path3.path</path>
+
+	</agent>
+</agents>
