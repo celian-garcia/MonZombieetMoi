@@ -26,17 +26,19 @@ public class MovementManager : MonoBehaviour
 
 	}
 
-	public void Move (InputManager.ControlType type, Vector2 direction, Vector2 rotation)
+	public void Move (InputManager.ControlType type, Vector2 direction, Vector2 rotation, bool stayInPlace)
 	{
+		anim.SetBool(hash.stayBool, stayInPlace);
+
+		if (type == InputManager.ControlType.FIRST_PERSON && rotation == null)
+			Debug.LogError("rotation parameters must be given with FIRST_PERSON control type");
+
 		switch (type) {
 		case InputManager.ControlType.FIRST_PERSON :
 			FPMoving (direction, rotation);
 			break;
 		case InputManager.ControlType.THIRD_PERSON :
 			TPMoving (direction);
-			break;
-		default :
-			Debug.LogError("Movement Management function doesn't know the control type.");
 			break;
 		}
 	}
@@ -77,7 +79,6 @@ public class MovementManager : MonoBehaviour
 
 	void TPMoving (Vector2 direction)
 	{
-		Debug.Log (this.gameObject.name);
 		// If there is not axis input...
 		if (direction.x == 0 && direction.y == 0) {
 			// Set the speed parameter to 0.
@@ -88,6 +89,7 @@ public class MovementManager : MonoBehaviour
 		// In third person moving we can't move backward
 		anim.SetInteger (hash.directionInt, 1);
 		anim.SetFloat (hash.speedFloat, maxSpeed, speedDampTime, Time.deltaTime);
+
 		
 		// Create a new vector of the horizontal and vertical inputs.
 		Vector3 targetDirection = new Vector3(direction.x, 0f, direction.y);

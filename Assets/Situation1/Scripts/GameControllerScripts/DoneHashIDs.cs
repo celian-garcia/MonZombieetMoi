@@ -19,6 +19,7 @@ public class DoneHashIDs : MonoBehaviour
 	
 	public int loungeBool;
 	public int directionInt;
+	public int stayBool;
 	
 	
 	void Awake ()
@@ -38,5 +39,6 @@ public class DoneHashIDs : MonoBehaviour
 
 		loungeBool = Animator.StringToHash("Lounge");
 		directionInt = Animator.StringToHash ("Direction");
+		stayBool = Animator.StringToHash ("Stay");
 	}
 }

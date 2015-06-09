@@ -3,16 +3,18 @@ using System.Collections;
 using System.Linq;
 
 public class CameraManager : MonoBehaviour {
-	public Camera initialCamera; 
+	public Camera initialMainCamera; 
 
 	private Camera transition_camera;
 	private Camera current_camera;
-	private Camera next_camera;
 
 
 	public void Awake() {
-		if (this.initialCamera != null) 
-			this.setCamera (initialCamera);
+	}
+
+	public void Initialize() {
+		if (this.initialMainCamera != null) 
+			this.setMainCamera (initialMainCamera);
 	}
 
 	public GameObject[] getAllCameras () {
@@ -28,12 +30,12 @@ public class CameraManager : MonoBehaviour {
 		}
 	}
 
-	public void setCamera (string camera) {
+	public void setMainCamera (string camera) {
 		// Set the current camera
-		this.setCamera(GameObject.Find(camera).GetComponent<Camera>());
+		this.setMainCamera(GameObject.Find(camera).GetComponent<Camera>());
 	}
 
-	public void setCamera (Camera camera) {
+	public void setMainCamera (Camera camera) {
 		// Disable all cameras
 		DisableAll ();
 		
@@ -41,5 +43,15 @@ public class CameraManager : MonoBehaviour {
 		this.current_camera = camera;
 		// and enable it
 		this.current_camera.enabled = true;
+	}
+
+	public void Orient(Vector2 orientation) {
+		this.current_camera.gameObject.transform.Rotate(
+			orientation.y, orientation.x, 0
+		);
+	}
+	public void changeCamera (Camera camera) {
+		// TODO : switch of camera using differents transitions
+		// You can use currentCamera and/or transitionCamera 
 	}
 }

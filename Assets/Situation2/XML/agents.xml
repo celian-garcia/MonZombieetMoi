@@ -13,9 +13,9 @@
 
 		</characteristics>
 
-		<body name="Ethan" >Prefabs/char_ethan_museum</body>
+		<body name="Ethan" >Bodies/char_ethan_museum</body>
 
-		<path sense="-1" >Paths/path1.path</path>
+		<path sense="-1" >Paths/Path1</path>
 
 	</agent>
 
@@ -31,9 +31,9 @@
 
 		</characteristics>
 
-		<body name="Ethan" >Prefabs/char_ethan_museum</body>
+		<body name="Ethan" >Bodies/char_ethan_museum</body>
 
-		<path sense="1" >Paths/path2.path</path>
+		<path sense="1" >Paths/Path2</path>
 
 	</agent>
 
@@ -49,9 +49,9 @@
 
 		</characteristics>
 
-		<body name="Ethan" >Prefabs/char_ethan_museum</body>
+		<body name="Ethan" >Bodies/char_ethan_museum</body>
 
-		<path sense="1" >Paths/path3.path</path>
+		<path sense="1" >Paths/Path1</path>
 
 	</agent>
 </agents>

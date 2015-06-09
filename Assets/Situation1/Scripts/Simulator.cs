@@ -17,7 +17,8 @@ public class Simulator : MonoBehaviour {
 		mover.Move(
 			this.input_manager.getControlType(),
 			this.input_manager.getDirection(),
-			this.input_manager.getOrientation()
+			this.input_manager.getOrientation(),
+			false
 		);
 	}
 }
