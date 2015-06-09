@@ -16,7 +16,7 @@ public class AgentSimulation : MonoBehaviour {
 	private void OnValidate()
 	{
 		XMLPath = "Assets/Situation2/XML/agents.xml";
-		visitDuration = 40;
+		visitDuration = 80;
 	}
 
 	// Use this for initialization
@@ -30,7 +30,7 @@ public class AgentSimulation : MonoBehaviour {
 		this.camera_manager = GetComponent<CameraManager> ();
 
 		// Initialize the camera with the first agent one
-		this.camera_manager.setMainCamera(agents[1].Body.GetComponentInChildren<Camera>());
+		this.camera_manager.setMainCamera(agents[0].Body.GetComponentInChildren<Camera>());
 	}
 
 	// Called each frame

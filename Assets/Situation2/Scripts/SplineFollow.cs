@@ -13,6 +13,9 @@ public class SplineFollow : MonoBehaviour {
 	private float progress;
 	private bool goingForward = true;
 	private MovementManager mover;
+	private float speed = 1.0f;
+	private float slowDownDistance = 2.0f;
+	private float stopDistance = 0.1f;
 
 	// Use of factory design pattern
 	public static SplineFollow CreateSplineFollow ( GameObject go, BezierSpline spline, float duration, 
@@ -40,7 +43,7 @@ public class SplineFollow : MonoBehaviour {
 			return;
 		}
 		if (goingForward) {
-			progress += Time.deltaTime / duration;
+			progress += (Time.deltaTime * speed / duration);
 			if (progress > 1f) {
 				if (mode == SplineWalkerMode.Once) {
 					progress = 1f;
@@ -55,7 +58,7 @@ public class SplineFollow : MonoBehaviour {
 			}
 		}
 		else {
-			progress -= Time.deltaTime / duration;
+			progress -= (Time.deltaTime / duration) * speed;
 			if (progress < 0f) {
 				progress = -progress;
 				goingForward = true;
@@ -73,9 +76,28 @@ public class SplineFollow : MonoBehaviour {
 			true
 		);
 
-
 		Vector3 position = spline.GetPoint(progress);
 		transform.localPosition = position;
+
+		int i = spline.GetNextImportantPointIndex(progress);
+
+		if (spline.GetImportantPointMode(i) == BezierControlPointMode.Aligned) {
+			Vector3 nextPosition = spline.GetImportantPoint(i);
+			Debug.Log (nextPosition);
+			Debug.Log(position);
+			float distance = Vector3.Distance(position, nextPosition);
+			Debug.Log (distance);
+			if (distance < slowDownDistance) {
+				if (distance > stopDistance) {
+					speed = distance  / (slowDownDistance - stopDistance);
+					return;
+				}
+			}
+		}
+
+		speed = 1.0f;
+
+
 
 	}
 }

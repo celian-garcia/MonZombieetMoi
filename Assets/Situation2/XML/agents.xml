@@ -15,7 +15,7 @@
 
 		<body name="Ethan" >Bodies/char_ethan_museum</body>
 
-		<path sense="-1" >Paths/Path1</path>
+		<path sense="-1" >Paths/Path2</path>
 
 	</agent>
 

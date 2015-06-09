@@ -4,10 +4,10 @@ using System;
 public class BezierSpline : MonoBehaviour {
 
 	[SerializeField]
-	private Vector3[] points;
+	public Vector3[] points;
 
 	[SerializeField]
-	private BezierControlPointMode[] modes;
+	public BezierControlPointMode[] modes;
 
 	[SerializeField]
 	private bool loop;
@@ -161,6 +161,27 @@ public class BezierSpline : MonoBehaviour {
 	
 	public Vector3 GetDirection (float t) {
 		return GetVelocity(t).normalized;
+	}
+
+	public int GetNextImportantPointIndex (float t) {
+		int i;
+		if (t >= 1f) {
+			i = -1;
+		}
+		else {
+			t = Mathf.Clamp01(t) * CurveCount;
+			i = (int)t;
+			i++;
+		}
+		return i;
+	}
+
+	public BezierControlPointMode GetImportantPointMode (int index) {
+		return modes[index];
+	}
+
+	public Vector3 GetImportantPoint (int index) {
+		return this.transform.TransformPoint(points[index * 3]);//);
 	}
 
 	public void AddCurve () {
