@@ -6,11 +6,26 @@ public class CameraManager : MonoBehaviour {
 
 	private Camera transition_camera;
 	private Camera current_camera;
+	private Camera targetCamera;
 
 	private OVRCameraRig transition_oculus;
 	private OVRCameraRig current_oculus;
-	
-	public void Awake() {
+
+	private GameObject item;
+	private GameObject ethanBody;
+	private bool itemEnable = true;
+
+	private FaderScript faderScript;
+	private Quaternion transformStock;
+
+	void Start(){
+		faderScript = this.gameObject.GetComponent<FaderScript>();
+		targetCamera = null;
+	}
+
+	void Update(){
+		rayCast();
+		toSwhichOrNotToSwhich();
 	}
 
 	public GameObject[] getAllCameras () {
@@ -83,4 +98,68 @@ public class CameraManager : MonoBehaviour {
 		// TODO : switch of oculus using differents transitions
 		// You can use currentOculus and/or transitionOculus 
 	}
+
+	public void rayCast(){
+
+		Ray ray = current_camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+		RaycastHit hit;
+
+		if (Physics.Raycast (ray, out hit)) {
+
+			if (item != null && item != hit.transform.gameObject){
+				if (item.name == "char_ethan_museum(Clone)")
+					ethanBody.GetComponent<SkinnedMeshRenderer>().enabled = true;
+				else
+					item.GetComponent<MeshRenderer>().enabled = true;
+			}
+			if (hit.transform.name == "char_ethan_museum(Clone)" ||  hit.transform.tag == "Painting")// Est-ce Un char Ethan ou un tableau ? 
+			{
+				item = hit.transform.gameObject; // On le stock
+
+				foreach(Transform child in item.transform){
+					if (child.name == "char_ethan_body"){
+						ethanBody = child.gameObject; // on stock son body
+						ethanBody.GetComponent<SkinnedMeshRenderer>().enabled = itemEnable;
+					}else if(child.gameObject.GetComponent<Camera>() != null){
+						targetCamera = child.gameObject.GetComponent<Camera>();
+					}
+				}
+				if(hit.transform.tag == "Painting")
+					item.GetComponent<MeshRenderer>().enabled = itemEnable;
+				itemEnable = !itemEnable; 
+			}
+		}
+	}
+
+	private void toSwhichOrNotToSwhich(){
+
+		if (Input.GetKeyDown (KeyCode.Alpha2)) {
+			if (this.current_camera != targetCamera) {
+				faderScript.BeginFade (1, 100);
+				current_camera.transform.rotation = transformStock;
+				setMainCamera (targetCamera);
+				transformStock = current_camera.transform.rotation;
+				faderScript.BeginFade (-1, 2, 0.5f);
+			}
+		
+		} else if (Input.GetKeyDown (KeyCode.Alpha1)) {
+			if (this.current_camera != targetCamera) {
+				current_camera.transform.rotation = transformStock;
+				setMainCamera (targetCamera);
+				transformStock = current_camera.transform.rotation;
+			}
+
+		}else if (Input.GetKeyDown (KeyCode.Alpha3)) {
+			if (this.current_camera != targetCamera) {
+				CameraMouvementsScript cms = targetCamera.GetComponent<CameraMouvementsScript>();
+//
+//				current_camera.transform = transformStock;
+//				setMainCamera (targetCamera);
+//				transformStock = current_camera.transform;
+			}
+			
+		}
+
+	}
+
 }
