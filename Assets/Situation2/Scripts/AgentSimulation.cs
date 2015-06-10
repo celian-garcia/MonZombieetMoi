@@ -31,6 +31,9 @@ public class AgentSimulation : MonoBehaviour {
 
 		// Initialize the camera with the first agent one
 		this.camera_manager.setMainCamera(agents[0].Body.GetComponentInChildren<Camera>());
+
+//		// Initialize the camera with the main painting one
+//		this.camera_manager.setMainCamera(GameObject.Find ("Master").GetComponentInChildren<Camera>());
 	}
 
 	// Called each frame
@@ -43,6 +46,8 @@ public class AgentSimulation : MonoBehaviour {
 //			this.input_manager.getDirection(),
 //			this.input_manager.getOrientation()
 //		);
+
+
 
 		// We can orient a little the camera
 		this.camera_manager.Orient(input_manager.getOrientation ());
