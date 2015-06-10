@@ -3,18 +3,12 @@ using System.Collections;
 using System.Linq;
 
 public class CameraManager : MonoBehaviour {
-	public Camera initialMainCamera; 
 
 	private Camera transition_camera;
 	private Camera current_camera;
 
 
 	public void Awake() {
-	}
-
-	public void Initialize() {
-		if (this.initialMainCamera != null) 
-			this.setMainCamera (initialMainCamera);
 	}
 
 	public GameObject[] getAllCameras () {

@@ -7,6 +7,8 @@ public class AgentSimulation : MonoBehaviour {
 
 	public string XMLPath;
 	public float visitDuration;
+	public Camera initialCamera;
+
 	private InputManager input_manager;
 	private CameraManager camera_manager;
 	private List<Agent> agents;
@@ -30,7 +32,7 @@ public class AgentSimulation : MonoBehaviour {
 		this.camera_manager = GetComponent<CameraManager> ();
 
 		// Initialize the camera with the first agent one
-		this.camera_manager.setMainCamera(agents[0].Body.GetComponentInChildren<Camera>());
+		this.camera_manager.setMainCamera(initialCamera);
 
 //		// Initialize the camera with the main painting one
 //		this.camera_manager.setMainCamera(GameObject.Find ("Master").GetComponentInChildren<Camera>());
@@ -49,7 +51,7 @@ public class AgentSimulation : MonoBehaviour {
 
 
 
-		// We can orient a little the camera
+		// We can orient the camera
 		this.camera_manager.Orient(input_manager.getOrientation ());
 
 	}
