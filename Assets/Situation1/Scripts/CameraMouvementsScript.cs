@@ -14,6 +14,8 @@ public class CameraMouvementsScript : MonoBehaviour {
 	public int smooth = 5;
 	public float speed = 10f;
 
+	public bool withIntro = false;
+
 	private Vector3 lastVector;
 	private Vector3 actualVector;
 	private Vector3 translateVector;
@@ -23,32 +25,35 @@ public class CameraMouvementsScript : MonoBehaviour {
 	private bool CameraMvtEnd = false;
 
 	private float tmp;
+	
 
 	void Start () {
 
+		this.withIntro = GameObject.FindGameObjectWithTag (DoneTags.gameController).GetComponent<changementSceneScript> ().withIntro;
 
+		if (withIntro) {
 
-		posLength = pos.Length;
+			posLength = pos.Length;
 //		resetPosition = pos [posLength - 1];
-		interpolation (pos);
-		posInterpolateLength = posInterpolate.Length;
-		this.transform.position = posInterpolate [0];
-		this.transform.LookAt(posInterpolate[n]);
-		nextLook = posInterpolate [n];
-
+			interpolation (pos);
+			posInterpolateLength = posInterpolate.Length;
+			this.transform.position = posInterpolate [0];
+			this.transform.LookAt (posInterpolate [n]);
+			nextLook = posInterpolate [n];
+		} else GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<FaderScript> ().BeginFade(1,10);
 	}
 	
 	// Update is called once per frame
 	void Update (){
-		if (!CameraMvtEnd){
-
+		if (!CameraMvtEnd) {
 			cameraMouvements ();
+		}
+
 	}
-}
 
 
 	void cameraMouvements (){
-		if (!stop) {
+		if (withIntro && !stop) {
 			translateVector = (posInterpolate [k] - this.transform.position);
 			this.transform.position += (translateVector.normalized * Time.deltaTime * speed);
 
@@ -60,7 +65,7 @@ public class CameraMouvementsScript : MonoBehaviour {
 				k++;
 				stop = k > (posInterpolateLength - n - 1);
 			}
-		} else if ((this.transform.position - pos [posLength - 1]).magnitude > 0.1f) {
+		} else if (withIntro && (this.transform.position - pos [posLength - 1]).magnitude > 0.1f ) {
 
 			speed = speed < 0.9f ? 0.9f : speed -= 12.5f * Time.deltaTime;
 			translateVector = (pos [posLength - 1] - this.transform.position);
@@ -74,15 +79,13 @@ public class CameraMouvementsScript : MonoBehaviour {
 				GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<FaderScript> ().BeginFade(1,2);
 			}
 			
-		} else if (!CameraMvtEnd) {
+		} else {
 			GameObject.Find("char_ethan").GetComponent<WakeUpScript>().getUp();
 			CameraMvtEnd = true;
 		}
-
-
 	}
 
-	// interpolate the différents points to have a perfect traveling.
+	// interpolate the différents points to have a smooth traveling.
 	void interpolation (Vector3[] pos){
 		int tmp = 0;
 		int[] magnitudes = new int[posLength];

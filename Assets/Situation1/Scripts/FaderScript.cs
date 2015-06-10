@@ -4,7 +4,7 @@ using System.Collections;
 public class FaderScript : MonoBehaviour {
 
 	public Texture2D fadeOutTexture;
-	public float fadeSpeed = 0.8f;
+	public float fadeSpeed = 0.3f;
 
 	private int drawDepth = -1000;
 	private float alpha = 1.0f;
@@ -21,6 +21,11 @@ public class FaderScript : MonoBehaviour {
 		GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), fadeOutTexture);
 
 	}
+
+	public void BeginFade (){
+		fadeDir = - fadeDir;
+	}
+
 
 	public void BeginFade (int direction){
 		fadeDir = direction;
@@ -45,4 +50,7 @@ public class FaderScript : MonoBehaviour {
 		BeginFade (-1);
 	}
 
+	public bool isFaded (){
+		return (alpha == 1.0f);
+	}
 }
