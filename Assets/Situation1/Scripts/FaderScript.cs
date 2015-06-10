@@ -24,6 +24,7 @@ public class FaderScript : MonoBehaviour {
 
 	public void BeginFade (int direction){
 		fadeDir = direction;
+		fadeSpeed = 0.8f;
 	}
 
 	public void BeginFade (int direction, float speed)

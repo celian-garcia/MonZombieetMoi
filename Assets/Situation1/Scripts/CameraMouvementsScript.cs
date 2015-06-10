@@ -13,6 +13,7 @@ public class CameraMouvementsScript : MonoBehaviour {
 	public int n = 5; // nombre de points dont la caméra saute pour lookat
 	public int smooth = 5;
 	public float speed = 10f;
+	public bool fadeOutEnable = true;
 
 	private Vector3 lastVector;
 	private Vector3 actualVector;
@@ -24,17 +25,22 @@ public class CameraMouvementsScript : MonoBehaviour {
 
 	private float tmp;
 
-	void Start () {
+	public void Start () {
 
 
-
+		posInterpolate = default(Vector3[]);
+		posInterpolateLength = default(int);
+		k = 0;
 		posLength = pos.Length;
+		n = n > posLength ? posLength : n;
 //		resetPosition = pos [posLength - 1];
 		interpolation (pos);
 		posInterpolateLength = posInterpolate.Length;
 		this.transform.position = posInterpolate [0];
 		this.transform.LookAt(posInterpolate[n]);
 		nextLook = posInterpolate [n];
+		lastVector = new Vector3();
+		actualVector = new Vector3();
 
 	}
 	
@@ -70,12 +76,13 @@ public class CameraMouvementsScript : MonoBehaviour {
 			tmp = tmp < 0 ? 0 : tmp;
 			this.transform.LookAt (resetLook * (1 - tmp) + nextLook * (tmp));
 
-			if ((this.transform.position - pos [posLength - 1]).magnitude < 0.92f) {
+			if ((this.transform.position - pos [posLength - 1]).magnitude < 0.92f && fadeOutEnable) {
 				GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<FaderScript> ().BeginFade(1,2);
 			}
 			
 		} else if (!CameraMvtEnd) {
-			GameObject.Find("char_ethan").GetComponent<WakeUpScript>().getUp();
+			if (GameObject.Find("char_ethan") != null)
+				GameObject.Find("char_ethan").GetComponent<WakeUpScript>().getUp();
 			CameraMvtEnd = true;
 		}
 
@@ -121,6 +128,10 @@ public class CameraMouvementsScript : MonoBehaviour {
 
 		posInterpolate [posInterpolate.Length - 1] = pos [posLength - 1];
 
+	}
+
+	public bool getCameraMvtEnd (){
+		return CameraMvtEnd;
 	}
 	
 }

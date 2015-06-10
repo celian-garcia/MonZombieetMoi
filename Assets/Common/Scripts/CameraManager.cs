@@ -21,11 +21,13 @@ public class CameraManager : MonoBehaviour {
 	void Start(){
 		faderScript = this.gameObject.GetComponent<FaderScript>();
 		targetCamera = null;
+		transformStock = current_camera.transform.rotation;
 	}
 
 	void Update(){
 		rayCast();
-		toSwhichOrNotToSwhich();
+		if(targetCamera != null)
+			toSwhichOrNotToSwhich();
 	}
 
 	public GameObject[] getAllCameras () {
@@ -132,34 +134,68 @@ public class CameraManager : MonoBehaviour {
 	}
 
 	private void toSwhichOrNotToSwhich(){
+		if (Input.GetKeyDown (KeyCode.Alpha2) && this.current_camera != targetCamera) {
+			faderScript.BeginFade (1, 100f);
+			current_camera.transform.rotation = transformStock;
+			setMainCamera (targetCamera);
+			transformStock = current_camera.transform.rotation;
+			faderScript.BeginFade (-1, 2, 0.5f);	
 
-		if (Input.GetKeyDown (KeyCode.Alpha2)) {
-			if (this.current_camera != targetCamera) {
-				faderScript.BeginFade (1, 100);
-				current_camera.transform.rotation = transformStock;
-				setMainCamera (targetCamera);
-				transformStock = current_camera.transform.rotation;
-				faderScript.BeginFade (-1, 2, 0.5f);
-			}
-		
-		} else if (Input.GetKeyDown (KeyCode.Alpha1)) {
-			if (this.current_camera != targetCamera) {
-				current_camera.transform.rotation = transformStock;
-				setMainCamera (targetCamera);
-				transformStock = current_camera.transform.rotation;
-			}
+		} else if (Input.GetKeyDown (KeyCode.Alpha1) && this.current_camera != targetCamera) {
+			current_camera.transform.rotation = transformStock;
+			setMainCamera (targetCamera);
+			transformStock = current_camera.transform.rotation;
 
-		}else if (Input.GetKeyDown (KeyCode.Alpha3)) {
-			if (this.current_camera != targetCamera) {
-				CameraMouvementsScript cms = targetCamera.GetComponent<CameraMouvementsScript>();
-//
-//				current_camera.transform = transformStock;
-//				setMainCamera (targetCamera);
-//				transformStock = current_camera.transform;
-			}
+		}else if (Input.GetKeyDown (KeyCode.Alpha3) && this.current_camera != targetCamera) {
+			StartCoroutine(fadeBeforeSwich());
 			
-		}
+		}else if (Input.GetKeyDown (KeyCode.Alpha4) && this.current_camera != targetCamera) {
 
+			CameraMouvementsScript cms = targetCamera.transform.gameObject.AddComponent<CameraMouvementsScript>();
+			current_camera.transform.rotation = transformStock;
+
+			// Stockage des différents position des caméra pour intervertir.
+			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
+			Vector3 targetInitialCamPos = targetCamera.transform.position;
+
+			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward;
+			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
+			cms.fadeOutEnable = true;
+
+			targetCamera.transform.rotation = current_camera.transform.rotation;
+			targetCamera.transform.position = current_camera.transform.position;
+
+			setMainCamera (targetCamera);
+			transformStock = targetInitialCamRot;
+			cms.Start();
+
+			StartCoroutine( checkCameraWellArrived(cms));
+		}
 	}
+
+	private IEnumerator checkCameraWellArrived(CameraMouvementsScript cms){
+		while (!cms.getCameraMvtEnd()) {
+			if (item.name == "char_ethan_museum(Clone)"){
+				cms.pos[cms.pos.Length - 1] = item.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).transform.position;
+			}
+			yield return new WaitForSeconds (0.01f);
+		}
+//			yield return new WaitForSeconds (0.2f);
+		faderScript.BeginFade (-1, 1);
+		Destroy (cms);
+	}
+
+	private IEnumerator fadeBeforeSwich(){// Fonction qui lance le changement de caméra à la fin du fade.
+		faderScript.BeginFade (1, 2);
+		yield return new WaitForSeconds (0.3f);
+
+		current_camera.transform.rotation = transformStock;
+		setMainCamera (targetCamera);
+		transformStock = current_camera.transform.rotation;
+		faderScript.BeginFade (-1, 1, 0.3f);
+	}
+
+
+
 
 }
