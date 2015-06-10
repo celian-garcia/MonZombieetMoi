@@ -30,9 +30,14 @@ public class MovementManager : MonoBehaviour
 	{
 		anim.SetBool(hash.stayBool, stayInPlace);
 
+		this.Move (type, direction, rotation);
+
+	}
+
+	public void Move (InputManager.ControlType type, Vector2 direction, Vector2 rotation ) {
 		if (type == InputManager.ControlType.FIRST_PERSON && rotation == null)
 			Debug.LogError("rotation parameters must be given with FIRST_PERSON control type");
-
+		
 		switch (type) {
 		case InputManager.ControlType.FIRST_PERSON :
 			FPMoving (direction, rotation);
