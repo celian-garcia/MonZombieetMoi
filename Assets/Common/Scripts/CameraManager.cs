@@ -13,21 +13,29 @@ public class CameraManager : MonoBehaviour {
 
 	private GameObject item;
 	private GameObject ethanBody;
+	private GameObject ethanHead;
 	private bool itemEnable = true;
 
 	private FaderScript faderScript;
 	private Quaternion transformStock;
 
+	public bool clignotement = true;
+
+//	public float bride = 40;
+
 	void Start(){
 		faderScript = this.gameObject.GetComponent<FaderScript>();
 		targetCamera = null;
 		transformStock = current_camera.transform.rotation;
+		ethanHead = null;
+
 	}
 
 	void Update(){
 		rayCast();
 		if(targetCamera != null)
 			toSwhichOrNotToSwhich();
+//		bridageCamera ();
 	}
 
 	public GameObject[] getAllCameras () {
@@ -121,16 +129,38 @@ public class CameraManager : MonoBehaviour {
 				foreach(Transform child in item.transform){
 					if (child.name == "char_ethan_body"){
 						ethanBody = child.gameObject; // on stock son body
-						ethanBody.GetComponent<SkinnedMeshRenderer>().enabled = itemEnable;
+						onFocus(1);
+
 					}else if(child.gameObject.GetComponent<Camera>() != null){
 						targetCamera = child.gameObject.GetComponent<Camera>();
 					}
 				}
 				if(hit.transform.tag == "Painting")
-					item.GetComponent<MeshRenderer>().enabled = itemEnable;
-				itemEnable = !itemEnable; 
+					onFocus(2);
+				itemEnable = clignotement ? !itemEnable : true;
 			}
 		}
+	}
+
+	private void onFocus(int choix){
+		switch (choix)
+		{
+		case 1:
+			ethanBody.GetComponent<SkinnedMeshRenderer>().enabled = itemEnable;
+			break;
+		case 2:
+			item.GetComponent<MeshRenderer>().enabled = itemEnable;
+			break;
+		default:
+			print("BUG");
+			break;
+		}
+
+	}
+
+	private void onFocus (GameObject gameObject){
+
+
 	}
 
 	private void toSwhichOrNotToSwhich(){
@@ -158,9 +188,9 @@ public class CameraManager : MonoBehaviour {
 			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
 			Vector3 targetInitialCamPos = targetCamera.transform.position;
 
-			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward;
+			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward*3;
 			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
-			cms.fadeOutEnable = true;
+			cms.fadeOutEnable = false;
 
 			targetCamera.transform.rotation = current_camera.transform.rotation;
 			targetCamera.transform.position = current_camera.transform.position;
@@ -173,10 +203,12 @@ public class CameraManager : MonoBehaviour {
 		}
 	}
 
+
 	private IEnumerator checkCameraWellArrived(CameraMouvementsScript cms){
 		while (!cms.getCameraMvtEnd()) {
 			if (item.name == "char_ethan_museum(Clone)"){
-				cms.pos[cms.pos.Length - 1] = item.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).transform.position;
+				ethanHead = item.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).gameObject;
+				cms.pos[cms.pos.Length - 1] = ethanHead.transform.position;
 			}
 			yield return new WaitForSeconds (0.01f);
 		}
@@ -195,6 +227,22 @@ public class CameraManager : MonoBehaviour {
 		faderScript.BeginFade (-1, 1, 0.3f);
 	}
 
+//	private void bridageCamera(){
+//
+//		if (item.name == "char_ethan_museum(Clone)" && current_camera.GetComponent<CameraMouvementsScript>() == null)
+//		{
+//			print ("Dans la tete");
+//			ethanHead = item.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).gameObject;
+//
+//			if (Mathf.Abs(ethanHead.transform.localEulerAngles.x - current_camera.transform.localEulerAngles.x) > bride)
+//			{
+//				float tmp = current_camera.transform.localEulerAngles.x;
+//				tmp = ethanHead.transform.localEulerAngles.x;
+//				print ("stooooopt");
+//			}
+//
+//		}
+//	}
 
 
 
