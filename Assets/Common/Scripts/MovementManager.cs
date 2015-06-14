@@ -34,7 +34,7 @@ public class MovementManager : MonoBehaviour
 
 	}
 
-	public void Move (InputManager.ControlType type, Vector2 direction, Vector2 rotation ) {
+	private void Move (InputManager.ControlType type, Vector2 direction, Vector2 rotation ) {
 		if (type == InputManager.ControlType.FIRST_PERSON && rotation == null)
 			Debug.LogError("rotation parameters must be given with FIRST_PERSON control type");
 		
@@ -58,9 +58,6 @@ public class MovementManager : MonoBehaviour
 		Vector3 moveRotation = new Vector3 (0, rotation.x, 0);
 		transform.Rotate(moveRotation * turnSpeed);
 
-		// Rotate Camera
-		GetComponent<Camera>().transform.Rotate (new Vector3 (rotation.y, 0, 0) * turnSpeed);
-		
 		// Moving along X local axis 
 		Vector3 moveDirection = new Vector3 (direction.x, 0, 0);
 		moveDirection = this.transform.localToWorldMatrix * moveDirection;
@@ -71,14 +68,13 @@ public class MovementManager : MonoBehaviour
 			// Otherwise set the speed parameter to 0.
 			anim.SetFloat (hash.speedFloat, 0);
 			return;
-		}
+		}	
 
 		// Set direction of walk : forward or backward
 		anim.SetInteger (hash.directionInt, Mathf.RoundToInt(direction.y / Mathf.Abs (direction.y)));
 
 		// Run animation
 		anim.SetFloat (hash.speedFloat, inputSpeedY, speedDampTime, Time.deltaTime);
-
 
 	}
 

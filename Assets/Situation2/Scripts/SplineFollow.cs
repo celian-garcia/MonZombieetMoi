@@ -83,10 +83,7 @@ public class SplineFollow : MonoBehaviour {
 
 		if (spline.GetImportantPointMode(i) == BezierControlPointMode.Aligned) {
 			Vector3 nextPosition = spline.GetImportantPoint(i);
-			Debug.Log (nextPosition);
-			Debug.Log(position);
 			float distance = Vector3.Distance(position, nextPosition);
-			Debug.Log (distance);
 			if (distance < slowDownDistance) {
 				if (distance > stopDistance) {
 					speed = distance  / (slowDownDistance - stopDistance);

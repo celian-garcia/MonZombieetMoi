@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using UnityEngine.UI;
 
 public class CameraManager : MonoBehaviour {
 
 	private Camera transition_camera;
 	private Camera current_camera;
 	private Camera targetCamera;
+	private Camera previousTargetCamera;
 
 	private OVRCameraRig transition_oculus;
 	private OVRCameraRig current_oculus;
@@ -15,12 +17,20 @@ public class CameraManager : MonoBehaviour {
 	private GameObject ethanBody;
 	private GameObject ethanHead;
 	private bool itemEnable = true;
+	private bool noTarget;
+	private bool moving;
+
+
+
+	public Slider slider;
 
 	private FaderScript faderScript;
 	private Quaternion transformStock;
 
-	public bool clignotement = true;
-
+	public bool clignotement = false;
+	public bool occulusYOrN = true;
+	public bool autoSwich = true;	
+	public float waitTime = 3;
 //	public float bride = 40;
 
 	void Start(){
@@ -28,6 +38,10 @@ public class CameraManager : MonoBehaviour {
 		targetCamera = null;
 		transformStock = current_camera.transform.rotation;
 		ethanHead = null;
+		autoSwich = GameObject.FindObjectOfType<Canvas> ().enabled;
+		previousTargetCamera = null;
+
+		noTarget = true;
 
 	}
 
@@ -35,7 +49,10 @@ public class CameraManager : MonoBehaviour {
 		rayCast();
 		if(targetCamera != null)
 			toSwhichOrNotToSwhich();
-//		bridageCamera ();
+
+		if (targetCamera != null && autoSwich)
+			autoSwichFunction();
+
 	}
 
 	public GameObject[] getAllCameras () {
@@ -124,6 +141,7 @@ public class CameraManager : MonoBehaviour {
 			}
 			if (hit.transform.name == "char_ethan_museum(Clone)" ||  hit.transform.tag == "Painting")// Est-ce Un char Ethan ou un tableau ? 
 			{
+				noTarget = false;
 				item = hit.transform.gameObject; // On le stock
 
 				foreach(Transform child in item.transform){
@@ -138,7 +156,8 @@ public class CameraManager : MonoBehaviour {
 				if(hit.transform.tag == "Painting")
 					onFocus(2);
 				itemEnable = clignotement ? !itemEnable : true;
-			}
+			}else 
+				noTarget = true;
 		}
 	}
 
@@ -164,45 +183,128 @@ public class CameraManager : MonoBehaviour {
 	}
 
 	private void toSwhichOrNotToSwhich(){
+
 		if (Input.GetKeyDown (KeyCode.Alpha2) && this.current_camera != targetCamera) {
 			faderScript.BeginFade (1, 100f);
-			current_camera.transform.rotation = transformStock;
-			setMainCamera (targetCamera);
-			transformStock = current_camera.transform.rotation;
-			faderScript.BeginFade (-1, 2, 0.5f);	
+			if (!occulusYOrN) {
+				current_camera.transform.rotation = transformStock;
+				setMainCamera (targetCamera);
+				transformStock = current_camera.transform.rotation;	
+			} else {
+				current_camera.transform.position = targetCamera.transform.position;
+				current_camera.transform.rotation = targetCamera.transform.rotation;
+			}
+			faderScript.BeginFade (-1, 2, 0.5f);
+			current_camera.transform.parent = item.transform;
 
 		} else if (Input.GetKeyDown (KeyCode.Alpha1) && this.current_camera != targetCamera) {
-			current_camera.transform.rotation = transformStock;
-			setMainCamera (targetCamera);
-			transformStock = current_camera.transform.rotation;
+			if (!occulusYOrN) {
+				current_camera.transform.rotation = transformStock;
+				setMainCamera (targetCamera);
+				transformStock = current_camera.transform.rotation;
+			} else {
+				current_camera.transform.position = targetCamera.transform.position;
+				current_camera.transform.rotation = targetCamera.transform.rotation;				
+			}
+			current_camera.transform.parent = item.transform;
+		} else if (Input.GetKeyDown (KeyCode.Alpha3) && this.current_camera != targetCamera) {
 
-		}else if (Input.GetKeyDown (KeyCode.Alpha3) && this.current_camera != targetCamera) {
-			StartCoroutine(fadeBeforeSwich());
-			
-		}else if (Input.GetKeyDown (KeyCode.Alpha4) && this.current_camera != targetCamera) {
+			StartCoroutine (fadeBeforeSwich ());
+			current_camera.transform.parent = item.transform;
 
-			CameraMouvementsScript cms = targetCamera.transform.gameObject.AddComponent<CameraMouvementsScript>();
-			current_camera.transform.rotation = transformStock;
-
-			// Stockage des différents position des caméra pour intervertir.
-			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
-			Vector3 targetInitialCamPos = targetCamera.transform.position;
-
-			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward*3;
-			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
-			cms.fadeOutEnable = false;
-
-			targetCamera.transform.rotation = current_camera.transform.rotation;
-			targetCamera.transform.position = current_camera.transform.position;
-
-			setMainCamera (targetCamera);
-			transformStock = targetInitialCamRot;
-			cms.Start();
-
-			StartCoroutine( checkCameraWellArrived(cms));
+		} else if (Input.GetKeyDown (KeyCode.Alpha4) && this.current_camera != targetCamera) {
+			moveCamera();
+		} else if (Input.GetKeyDown (KeyCode.Alpha5)) {
+			autoSwich = !autoSwich;
 		}
 	}
 
+	private void moveCamera(){
+
+		if (!occulusYOrN) {
+			CameraMouvementsScript cms = targetCamera.transform.gameObject.AddComponent<CameraMouvementsScript> ();
+			current_camera.transform.rotation = transformStock;
+			
+			// Stockage des différents position des caméra pour intervertir.
+			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
+			Vector3 targetInitialCamPos = targetCamera.transform.position;
+			
+			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward * 3;
+			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
+			cms.fadeOutEnable = false;
+			
+			targetCamera.transform.rotation = current_camera.transform.rotation;
+			targetCamera.transform.position = current_camera.transform.position;
+			
+			setMainCamera (targetCamera);
+			transformStock = targetInitialCamRot;
+			cms.Start ();
+			
+			StartCoroutine (checkCameraWellArrived (cms));
+		} else {
+			CameraMouvementsScript cms = current_camera.transform.gameObject.AddComponent<CameraMouvementsScript> ();
+			
+			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
+			Vector3 targetInitialCamPos = targetCamera.transform.position;
+			
+			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward * 3;
+			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
+			cms.fadeOutEnable = false;
+			cms.Start ();
+			
+			StartCoroutine (checkCameraWellArrived (cms));
+			current_camera.transform.parent = item.transform;
+		}
+
+
+	}
+
+	private void autoSwichFunction(){
+
+		if (!moving) {
+
+			if (slider.value >= slider.maxValue) {
+				if ((targetCamera.transform.position - current_camera.transform.position).magnitude > 1)
+				{
+					moveCamera ();
+					moving = true;
+
+				}
+				else
+				{
+					current_camera.transform.position = targetCamera.transform.position;
+					current_camera.transform.rotation = targetCamera.transform.rotation;
+				}
+				slider.value = 0;
+
+			} else {
+				if (targetCamera == previousTargetCamera && targetCamera != null) {
+				
+					slider.value += item.name == "char_ethan_museum(Clone)" ? Time.deltaTime*1.5f:Time.deltaTime;
+				} else {
+					slider.value -= Time.deltaTime*2;
+				}
+			}
+		}
+		previousTargetCamera = noTarget? null:targetCamera;
+	}
+
+
+
+	private IEnumerator fadeBeforeSwich(){// Fonction qui lance le changement de caméra à la fin du fade.
+		faderScript.BeginFade (1, 2);
+		yield return new WaitForSeconds (0.3f);
+		if (!occulusYOrN){
+			current_camera.transform.rotation = transformStock;
+			setMainCamera (targetCamera);
+			transformStock = current_camera.transform.rotation;
+
+		}else{
+			current_camera.transform.position = targetCamera.transform.position;
+			current_camera.transform.rotation = targetCamera.transform.rotation;
+		}
+		faderScript.BeginFade (-1, 1, 0.3f);
+	}
 
 	private IEnumerator checkCameraWellArrived(CameraMouvementsScript cms){
 		while (!cms.getCameraMvtEnd()) {
@@ -212,20 +314,17 @@ public class CameraManager : MonoBehaviour {
 			}
 			yield return new WaitForSeconds (0.01f);
 		}
-//			yield return new WaitForSeconds (0.2f);
+		//			yield return new WaitForSeconds (0.2f);
 		faderScript.BeginFade (-1, 1);
 		Destroy (cms);
+		StartCoroutine(waitBeforeAutoSwichAgain());
 	}
 
-	private IEnumerator fadeBeforeSwich(){// Fonction qui lance le changement de caméra à la fin du fade.
-		faderScript.BeginFade (1, 2);
-		yield return new WaitForSeconds (0.3f);
-
-		current_camera.transform.rotation = transformStock;
-		setMainCamera (targetCamera);
-		transformStock = current_camera.transform.rotation;
-		faderScript.BeginFade (-1, 1, 0.3f);
+	private IEnumerator waitBeforeAutoSwichAgain(){
+		yield return new WaitForSeconds (waitTime);
+		moving = false;
 	}
+
 
 //	private void bridageCamera(){
 //

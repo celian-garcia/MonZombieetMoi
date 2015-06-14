@@ -14,8 +14,6 @@ public class InputManagerEditor : Editor {
 		if (inman.control_type == InputManager.ControlType.FIRST_PERSON) 
 			inman.head_controls = (InputManager.HeadControl)EditorGUILayout.EnumPopup ("Head Controls : ", (System.Enum)inman.head_controls);
 
-		Debug.Log ("Editor");
-
 	}
 	
 }

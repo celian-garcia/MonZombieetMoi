@@ -9,6 +9,8 @@ public class AgentSimulation : MonoBehaviour {
 	public float visitDuration;
 	public Camera initialCamera;
 
+	public bool withIntro;
+
 	private InputManager input_manager;
 	private CameraManager camera_manager;
 	private List<Agent> agents;
@@ -33,6 +35,10 @@ public class AgentSimulation : MonoBehaviour {
 
 		// Initialize the camera with the first agent one
 		this.camera_manager.setMainCamera(initialCamera);
+
+		//this.withIntro = this.GetComponent<changementSceneScript> ().withIntro;
+
+//		GameObject.Find ("Main Camera
 
 //		// Initialize the camera with the main painting one
 //		this.camera_manager.setMainCamera(GameObject.Find ("Master").GetComponentInChildren<Camera>());

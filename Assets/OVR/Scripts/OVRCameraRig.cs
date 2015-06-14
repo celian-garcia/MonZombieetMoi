@@ -123,7 +123,7 @@ public class OVRCameraRig : MonoBehaviour
 		OVRPose hmdLeftEye = OVRManager.display.GetEyePose(OVREye.Left);
 		OVRPose hmdRightEye = OVRManager.display.GetEyePose(OVREye.Right);
 
-		/*trackerAnchor.localRotation = tracker.orientation;
+		trackerAnchor.localRotation = tracker.orientation;
 		centerEyeAnchor.localRotation = hmdLeftEye.orientation; // using left eye for now
 		leftEyeAnchor.localRotation = monoscopic ? centerEyeAnchor.localRotation : hmdLeftEye.orientation;
 		rightEyeAnchor.localRotation = monoscopic ? centerEyeAnchor.localRotation : hmdRightEye.orientation;
@@ -131,7 +131,7 @@ public class OVRCameraRig : MonoBehaviour
 		trackerAnchor.localPosition = tracker.position;
 		centerEyeAnchor.localPosition = 0.5f * (hmdLeftEye.position + hmdRightEye.position);
 		leftEyeAnchor.localPosition = monoscopic ? centerEyeAnchor.localPosition : hmdLeftEye.position;
-		rightEyeAnchor.localPosition = monoscopic ? centerEyeAnchor.localPosition : hmdRightEye.position;*/
+		rightEyeAnchor.localPosition = monoscopic ? centerEyeAnchor.localPosition : hmdRightEye.position;
 
 		if (UpdatedAnchors != null)
 		{
