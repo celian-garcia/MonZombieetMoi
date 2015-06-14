@@ -7,7 +7,7 @@ public class AgentSimulation : MonoBehaviour {
 
 	public string XMLPath;
 	public float visitDuration;
-	public Camera initialCamera;
+	public OVRCameraRig oculus;
 
 	public bool withIntro;
 
@@ -34,7 +34,7 @@ public class AgentSimulation : MonoBehaviour {
 		this.camera_manager = GetComponent<CameraManager> ();
 
 		// Initialize the camera with the first agent one
-		this.camera_manager.setMainCamera(initialCamera);
+		this.camera_manager.setOculusCamera(oculus);
 
 		//this.withIntro = this.GetComponent<changementSceneScript> ().withIntro;
 
@@ -55,10 +55,8 @@ public class AgentSimulation : MonoBehaviour {
 //			this.input_manager.getOrientation()
 //		);
 
-
-
 		// We can orient the camera
-		this.camera_manager.Orient(input_manager.getOrientation ());
+//		this.camera_manager.Orient(input_manager.getOrientation ());
 
 	}
 
@@ -83,8 +81,6 @@ public class AgentSimulation : MonoBehaviour {
 			);
 		}
 	}
-
-
 
 	private string getLastName(string path) {
 

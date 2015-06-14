@@ -10,8 +10,7 @@ public class CameraManager : MonoBehaviour {
 	private Camera targetCamera;
 	private Camera previousTargetCamera;
 
-	private OVRCameraRig transition_oculus;
-	private OVRCameraRig current_oculus;
+	private OVRCameraRig oculus;
 
 	private GameObject item;
 	private GameObject ethanBody;
@@ -19,8 +18,6 @@ public class CameraManager : MonoBehaviour {
 	private bool itemEnable = true;
 	private bool noTarget;
 	private bool moving;
-
-
 
 	public Slider slider;
 
@@ -36,7 +33,7 @@ public class CameraManager : MonoBehaviour {
 	void Start(){
 		faderScript = this.gameObject.GetComponent<FaderScript>();
 		targetCamera = null;
-		transformStock = current_camera.transform.rotation;
+		transformStock = oculus.transform.rotation;
 		ethanHead = null;
 		autoSwich = GameObject.FindObjectOfType<Canvas> ().enabled;
 		previousTargetCamera = null;
@@ -86,29 +83,24 @@ public class CameraManager : MonoBehaviour {
 		}
 	}
 
-	public void setMainCamera (string camera) {
+	public void setFollowedCamera (string camera) {
 		// Set the current camera
-		this.setMainCamera(GameObject.Find(camera).GetComponent<Camera>());
+		this.setFollowedCamera(GameObject.Find(camera).GetComponent<Camera>());
 	}
 
-	public void setMainCamera (Camera camera) {
-		// Disable all cameras
-		DisableAll ();
-		
-		// Set the current camera
+	public void setFollowedCamera (Camera camera) {
+
 		this.current_camera = camera;
-		// and enable it
-		this.current_camera.enabled = true;
 	}
 
 	public void setOculusCamera(OVRCameraRig camera) {
 		// Disable all cameras
 		DisableAll();
 
-		// Set the current camera
-		this.current_oculus = camera;
+		// Set the oculus
+		this.oculus = camera;
 		// and enable it
-		this.current_oculus.enabled = true;
+		this.oculus.enabled = true;
 	}
 
 	public void Orient(Vector2 orientation) {
@@ -128,7 +120,12 @@ public class CameraManager : MonoBehaviour {
 
 	public void rayCast(){
 
-		Ray ray = current_camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+		Transform oculus_center = oculus.transform.GetChild(0).GetChild(1);
+
+		Ray ray = new Ray(oculus_center.transform.position, oculus_center.transform.forward);
+
+		Debug.DrawRay(ray.origin, ray.direction);
+//		Ray ray = oculus.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
 		RaycastHit hit;
 
 		if (Physics.Raycast (ray, out hit)) {
@@ -187,30 +184,30 @@ public class CameraManager : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Alpha2) && this.current_camera != targetCamera) {
 			faderScript.BeginFade (1, 100f);
 			if (!occulusYOrN) {
-				current_camera.transform.rotation = transformStock;
-				setMainCamera (targetCamera);
-				transformStock = current_camera.transform.rotation;	
+				oculus.transform.rotation = transformStock;
+				setFollowedCamera (targetCamera);
+				transformStock = oculus.transform.rotation;	
 			} else {
-				current_camera.transform.position = targetCamera.transform.position;
-				current_camera.transform.rotation = targetCamera.transform.rotation;
+				oculus.transform.position = targetCamera.transform.position;
+				oculus.transform.rotation = targetCamera.transform.rotation;
 			}
 			faderScript.BeginFade (-1, 2, 0.5f);
-			current_camera.transform.parent = item.transform;
+			oculus.transform.parent = item.transform;
 
 		} else if (Input.GetKeyDown (KeyCode.Alpha1) && this.current_camera != targetCamera) {
 			if (!occulusYOrN) {
-				current_camera.transform.rotation = transformStock;
-				setMainCamera (targetCamera);
-				transformStock = current_camera.transform.rotation;
+				oculus.transform.rotation = transformStock;
+				setFollowedCamera (targetCamera);
+				transformStock = oculus.transform.rotation;
 			} else {
-				current_camera.transform.position = targetCamera.transform.position;
-				current_camera.transform.rotation = targetCamera.transform.rotation;				
+				oculus.transform.position = targetCamera.transform.position;
+				oculus.transform.rotation = targetCamera.transform.rotation;				
 			}
-			current_camera.transform.parent = item.transform;
+			oculus.transform.parent = item.transform;
 		} else if (Input.GetKeyDown (KeyCode.Alpha3) && this.current_camera != targetCamera) {
 
 			StartCoroutine (fadeBeforeSwich ());
-			current_camera.transform.parent = item.transform;
+			oculus.transform.parent = item.transform;
 
 		} else if (Input.GetKeyDown (KeyCode.Alpha4) && this.current_camera != targetCamera) {
 			moveCamera();
@@ -223,37 +220,37 @@ public class CameraManager : MonoBehaviour {
 
 		if (!occulusYOrN) {
 			CameraMouvementsScript cms = targetCamera.transform.gameObject.AddComponent<CameraMouvementsScript> ();
-			current_camera.transform.rotation = transformStock;
+			oculus.transform.rotation = transformStock;
 			
 			// Stockage des différents position des caméra pour intervertir.
 			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
 			Vector3 targetInitialCamPos = targetCamera.transform.position;
 			
 			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward * 3;
-			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
+			cms.pos = new Vector3[] {oculus.transform.position,targetInitialCamPos};
 			cms.fadeOutEnable = false;
 			
-			targetCamera.transform.rotation = current_camera.transform.rotation;
-			targetCamera.transform.position = current_camera.transform.position;
+			targetCamera.transform.rotation = oculus.transform.rotation;
+			targetCamera.transform.position = oculus.transform.position;
 			
-			setMainCamera (targetCamera);
+			setFollowedCamera (targetCamera);
 			transformStock = targetInitialCamRot;
 			cms.Start ();
 			
 			StartCoroutine (checkCameraWellArrived (cms));
 		} else {
-			CameraMouvementsScript cms = current_camera.transform.gameObject.AddComponent<CameraMouvementsScript> ();
+			CameraMouvementsScript cms = oculus.transform.gameObject.AddComponent<CameraMouvementsScript> ();
 			
 			Quaternion targetInitialCamRot = targetCamera.transform.rotation; 
 			Vector3 targetInitialCamPos = targetCamera.transform.position;
 			
 			cms.resetLook = targetInitialCamPos + targetCamera.transform.forward * 3;
-			cms.pos = new Vector3[] {current_camera.transform.position,targetInitialCamPos};
+			cms.pos = new Vector3[] {oculus.transform.position,targetInitialCamPos};
 			cms.fadeOutEnable = false;
 			cms.Start ();
 			
 			StartCoroutine (checkCameraWellArrived (cms));
-			current_camera.transform.parent = item.transform;
+			oculus.transform.parent = item.transform;
 		}
 
 
@@ -264,7 +261,7 @@ public class CameraManager : MonoBehaviour {
 		if (!moving) {
 
 			if (slider.value >= slider.maxValue) {
-				if ((targetCamera.transform.position - current_camera.transform.position).magnitude > 1)
+				if ((targetCamera.transform.position - oculus.transform.position).magnitude > 1)
 				{
 					moveCamera ();
 					moving = true;
@@ -272,8 +269,8 @@ public class CameraManager : MonoBehaviour {
 				}
 				else
 				{
-					current_camera.transform.position = targetCamera.transform.position;
-					current_camera.transform.rotation = targetCamera.transform.rotation;
+					oculus.transform.position = targetCamera.transform.position;
+					oculus.transform.rotation = targetCamera.transform.rotation;
 				}
 				slider.value = 0;
 
@@ -295,13 +292,13 @@ public class CameraManager : MonoBehaviour {
 		faderScript.BeginFade (1, 2);
 		yield return new WaitForSeconds (0.3f);
 		if (!occulusYOrN){
-			current_camera.transform.rotation = transformStock;
-			setMainCamera (targetCamera);
-			transformStock = current_camera.transform.rotation;
+			oculus.transform.rotation = transformStock;
+			setFollowedCamera (targetCamera);
+			transformStock = oculus.transform.rotation;
 
 		}else{
-			current_camera.transform.position = targetCamera.transform.position;
-			current_camera.transform.rotation = targetCamera.transform.rotation;
+			oculus.transform.position = targetCamera.transform.position;
+			oculus.transform.rotation = targetCamera.transform.rotation;
 		}
 		faderScript.BeginFade (-1, 1, 0.3f);
 	}
